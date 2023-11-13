@@ -1,0 +1,51 @@
+# Custo User 모델을 사용하는 방법.(Django의 user를 상속받는 우리만의 user)
+  python manage.py startapp users
+  /* users.models.py */
+  from django.contrib.auth.models import AbstractUser
+  class User(AbstractUser):
+    pass
+  /* config.settings.py */ 
+  AUTH_USER_MODEL = 'users.User'
+
+# REST Framework 관련
+  pip install djangorestframework 설치
+  /* ~/serializers.py */
+  /* ~/views.py */
+  EXAMPLE
+  from .serializers import UserSerializer
+  from rest_framework.response import Response
+  from .models import User
+
+  @api_view()
+  def users(request):
+    all_users = User.objects.all()
+    serializer = UserSerializer(all_users, many=True) 여기에서 many 옵션은 여러개의 객체를 serializer할 때는 추가해줘야 한다.
+    return Response(
+      serializer.data,
+    )
+  
+  serializers.py 에는 모델에 어떤 필드들이 있는지 알려주고, 어떻게 변환되고, 어떤 형식으로 변환될지 정하면 된다.
+  serializer는 Django Python에서 JSON으로 번역해주는 거라고 했었는데,
+  사실은 절반만 맞는 말이다. 그 반대의 경우에도 도와주기 때문이다.
+  나머지 이유는 user로부터 데이터를 받아 장고 모델을 만드는데에 seralizer가 필요하다는 말이다.(양방향)
+
+  @api_view() 가 GET과 POST 요청을 받는다고 알려줄 수 있을까?
+  --> @api_view(["GET", "POST"])
+
+  반대의 경우에는 
+  serializer = UserSerializer(data=request.data) 이런식으로 data를 넘겨준다.
+  그렇기 때문에 우리는 serializer에게 데이터가 유효한지를 물어볼 수 있다.
+  EX: serializer.is_valid()
+
+# serializer에게 user가 created_at과 PK는 보내지 않는다고 어떻게 말할 수 있을까?
+  class UserSerializer(serializers.Serializer):
+      pk = serializers.IntegerField(read_only=True)
+  read_only=True를 추가해주면 된다.
+
+# serializer.save()를 실행하면, serializer는 자동으로 create 메서드를 찾기 시작한다.
+
+# **validated_data
+  {'name': 'kenchi'}
+  name = 'kenchi'
+  위와 같이 자동으로 해줄것이다. 시간을 아낄 수 있도록 그게 '**'가 하는 것이다.
+
