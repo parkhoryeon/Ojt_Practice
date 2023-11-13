@@ -45,7 +45,49 @@
 # serializer.save()를 실행하면, serializer는 자동으로 create 메서드를 찾기 시작한다.
 
 # **validated_data
-  {'name': 'kenchi'}
+  {'name': 'kenchi'} 
   name = 'kenchi'
   위와 같이 자동으로 해줄것이다. 시간을 아낄 수 있도록 그게 '**'가 하는 것이다.
+
+# 위에 까지는 Django REST Framework가 얼마나 마법 같은 지 보면 믿을 수 없을거야. 이 아래로는 마법을 보여준다!
+  어떻게 돌아가는지 이해를 해야지 나중에 마법같은 일이 벌어져도 너가 수정을 할 수 있게될것이다.
+
+##########################################################################################################
+
+# class 안에 있는 모든 메소드들은 self 가 있어야 한다.
+
+# urlpatterns에 class를 가져오려면 .as_view()를 해줘야 한다.
+  요청이 GET이면 def get()을 실행시키고
+  요청이 POST이면 def post()을 실행시킨다.
+  def put()
+  def delete()
+
+# def get_object() 공통적으로 쓰는 object는 여기에 정의를 한다.
+
+##########################################################################################################
+
+# 지금까지 한 것 처럼 Serializer를 수작업으로 세팅한다면 번거롭고 힘든 작업이다.
+  serializer한테 설명하는 건 Django 한테 model을 설명하는거랑 정말 비슷하다.
+  이 모든게 중복 되는건 말도 안돼.
+  많은 사람들이 model을 위한 serializer를 만들어야 하지.
+  다시는 serializer를 우리 손으로 직접 만들지 않을거야.
+  model을 위한 serializer를 만들 때 사용할 수 있는 자동으로 seralizer를 만들어주는 class가 있다.
+  model을 살펴보고 model에 있는 것들을 자동으로 가져올 것이다.
+  그리고 자동으로 create 메소드랑 update 메소드를 만들어 줘.
+
+# 그 대신에 우리가 사용할 것은 ModelSerializer 이다.!!!!
+  우리가 해야하는건 class의 이름을 적고 ModelSerializer로 부터 상속을 받는것이다.
+  그 다음에 class Meta:를 통해서 model과 fields, exclude를 통해서 보여줄 필드와 제외할 필드를 설정한다.
+
+##########################################################################################################
+
+# 우리는 Django REST Framewor의 말도 안되게 좋은 기능인 'ViewSet'을 볼거야.
+  ViewSet은 우리를 위한 많은 것들이 이미 되어 있는 엄청난 class 이다.
+  class UsersAPIViewSet(ModelViewSet):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+  serializer 선택, queryset 작성 끝...
+
+##########################################################################################################
+
 
