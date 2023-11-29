@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from .models import User
+from django.contrib.auth.hashers import make_password
 
 from rest_framework.viewsets import ModelViewSet
 
@@ -48,6 +49,12 @@ class UsersAPIViewSet(ModelViewSet):
 
     serializer_class = UserSerializer
     queryset = User.objects.all()
+
+    def perform_create(self, serializer):
+        validated_data = serializer.validated_data
+        # 비밀번호를 해싱하여 저장
+        validated_data['password'] = make_password(validated_data['password'])
+        serializer.save()
 
 # ################################################################################## 
 # 마법 1단계
